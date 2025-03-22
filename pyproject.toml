@@ -1,0 +1,10 @@
+[project]
+name = "mongodb-dev-cert-prep"
+version = "0.1.0"
+description = "End-to-end project for preparing MongoDB Associate Developer Certification Exam"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pymongo[srv]>=4.11.3",
+    "python-dotenv>=1.0.1",
+]
