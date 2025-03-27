@@ -1,6 +1,7 @@
 # Mongodb Associate Developer Certification Exam Prep
 
-An end-to-end project for preparing [MongoDB Associate Developer Certification Exam](https://learn.mongodb.com/pages/mongodb-associate-developer-exam)
+An end-to-end project for preparing [MongoDB Associate Developer Certification Exam](https://learn.mongodb.com/pages/mongodb-associate-developer-exam).
+
 
 ## Resources
 - [Exam study guide with exam objectives](https://learn.mongodb.com/learn/course/mongodb-associate-developer-exam-study-guide/main/associate-dba-exam-study-guide?client=customer)
@@ -9,24 +10,24 @@ An end-to-end project for preparing [MongoDB Associate Developer Certification E
 - [Install MongoDB Community with Docker](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-community-with-docker/)
 - [MongoDB Atlas sample datasets](https://www.mongodb.com/developer/products/atlas/atlas-sample-datasets/)
 
-## Mongo Setup
-### Option 1: Free-Tier MongoDB Atlas Cluster
+## Mongo Environment Setup
+### Option 1 : Free-Tier MongoDB Atlas Cluster (Recommended)
 #### Prerequisites
-- MongoDB Shell (mongosh) or VS Code MongoDB extension installed
+- MongoDB Shell (mongosh) or [VS Code MongoDB extension](https://code.visualstudio.com/docs/azure/mongodb) installed
 - Register a MongoDB Atlas account
 
-### Deploy Cluster
-1. Deploy a cluster on MongoDB Atlas. Connect to mongosh or VS Code using the connection string.
-2. Load [sample datasets](https://www.mongodb.com/developer/products/atlas/atlas-sample-datasets/) to Atlas cluster by clicking on the three dots beside "Browse Collections" and choose "Load Sample dataset"
+### Deploy a Cluster
+1. Deploy a M0 cluster on MongoDB Atlas. Connect to mongosh or VS Code using the connection string.
+2. Load [sample datasets](https://www.mongodb.com/developer/products/atlas/atlas-sample-datasets/) to Atlas cluster by clicking on the three dots beside "Browse Collections" and choose "Load Sample dataset". For this preparation, we use [sample_mflix](https://www.mongodb.com/docs/atlas/sample-data/sample-mflix/) data.
 
 ### Option 2: Local Run with Docker
 #### Prerequisites
-- MongoDB Shell (mongosh) installed
 - Docker and Docker Compose installed
-- Down [sample datasets](https://www.mongodb.com/developer/products/atlas/atlas-sample-datasets/) and manually load to local docker volume mount (i.e. `data/` in project root directory)
+- [MongoDB Shell (mongosh) installed](https://www.mongodb.com/docs/mongodb-shell/install/) in your terminal
+- Download [sample datasets](https://www.mongodb.com/developer/products/atlas/atlas-sample-datasets/) and manually load to local docker volume mount (e.g. `data/` in your project root directory). You can also configure the local mount location in [docker-compose.yaml](docker-compose.yml) under `service.volume` field.
 
 #### Starting MongoDB
-1. Create a data directory for MongoDB:
+1. Create a data directory for MongoDB volume mount:
 ```bash
 mkdir data
 ```
@@ -107,18 +108,17 @@ Note: we use volume to persist MongoDB data between container restarts.
 | 5       | **TOOLS AND TOOLING**                                                                                         | **2%**    |
 | 5.1     | Given a scenario to load Atlas Sample Dataset and then use Data Explorer to use it to find a given first document in a collection. | [link](#51-atlas-explorer) |
 | 6       | **DRIVERS** *(language-specific)*                                                                             | **18%**   |
-| 6.1     | Define what the XX driver is?                                                                                 | [link](#61-driver-definition) |
-| 6.2     | Define how the XX application connects/uses the XXX driver?                                                   | [link](#62-driver-connection) |
+| 6.1     | Define what the Python driver (PyMongo) is?                                                                                 | [link](#61-driver-definition) |
+| 6.2     | Define how the XX application connects/uses the XPython driver (PyMongo)?                                                   | [link](#62-driver-connection) |
 | 6.3     | Define the components of the URI string used by MongoClient to connect the driver to the database.            | [link](#63-uri-components) |
 | 6.4     | Identify what connection pooling is in terms of the driver and what advantages it oﬀers.                      | [link](#64-connection-pooling) |
-| 6.5     | Identify the correct syntax for the XX driver to insert one document and to insert many documents.            | [link](#65-insert-syntax) |
-| 6.6     | Identify the correct syntax for the XX driver to update one document and to update many documents.            | [link](#66-update-syntax) |
-| 6.7     | Identify the correct syntax for the XX driver to delete one document and to delete many documents.            | [link](#67-delete-syntax) |
-| 6.8     | Identify the correct syntax for the XX driver to find many documents and to find one document.                | [link](#68-find-syntax) |
-| 6.9     | Identify the correct syntax for the XX driver to create an aggregation pipeline.                              | [link](#69-aggregation-syntax) |
-| 6.10    | Identify the diﬀerent syntax for the XX driver when using the MongoDB Query Language (MQL) and when using the Aggregation Framework. | [link](#610-mql-vs-aggregation) |
+| 6.5     | Identify the correct syntax for the Python driver (PyMongo) to insert one document and to insert many documents.            | [link](#65-insert-syntax) |
+| 6.6     | Identify the correct syntax for the Python driver (PyMongo) to update one document and to update many documents.            | [link](#66-update-syntax) |
+| 6.7     | Identify the correct syntax for the Python driver (PyMongo) to delete one document and to delete many documents.            | [link](#67-delete-syntax) |
+| 6.8     | Identify the correct syntax for the Python driver (PyMongo) to find many documents and to find one document.                | [link](#68-find-syntax) |
+| 6.9     | Identify the correct syntax for the Python driver (PyMongo) to create an aggregation pipeline.                              | [link](#69-aggregation-syntax) |
+| 6.10    | Identify the diﬀerent syntax for the Python driver (PyMongo) when using the MongoDB Query Language (MQL) and when using the Aggregation Framework. | [link](#610-mql-vs-aggregation) |
 
-**Note:** The XX placeholders in the Drivers section indicate language-specific content based on the selected programming language during registration.
 
 # SECTION 1: MONGODB OVERVIEW AND THE DOCUMENT MODEL
 ## 1.1 BSON Type
@@ -135,24 +135,44 @@ Note: we use volume to persist MongoDB data between container restarts.
 # SECTION 2: CRUD
 ## 2.1 Insert Commands
 
+First, create two collections called `movies` and `reviews` respectively in the `test` database to store movie data and user reviews:
+
+<details>
+<summary>Show MQL Solution</summary>
+
 ```js
 db.createCollection("movies")
 db.createCollection("reviews")
 show collections
 ```
+</details>
 
-Insert your first few documents to the collection using `insertOne(doc)`
+### Inserting Documents with `insertOne()`
+
+Try inserting your first document into the `movies` collection yourself!
+
+```js
+{
+  title: "Interstellar",
+  year: 2014,
+  genre: ["Sci-Fi", "Adventure"],
+  reviews: [] // Initially empty, we'll add review ObjectIDs later
+}
+```
+
+<details>
+<summary>Show MQL Solution</summary>
 
 ```js
 db.movies.insertOne({
   title: "Interstellar",
   year: 2014,
   genre: ["Sci-Fi", "Adventure"],
-  reviews: [] // Initially empty; will store review ObjectIDs later
+  reviews: [] // Initially empty, we'll add review ObjectIDs later
 })
 ```
 
-You should get a response like this:
+**Expected Output:**
 
 ```js
 {
@@ -160,8 +180,33 @@ You should get a response like this:
   insertedId: ObjectId('67de300a9e676e70386b140b')
 }
 ```
+</details>
 
-Let's try `insertMany([doc1, doc2, ...])`. Don't forget to enclose documents in an array.
+### Batch Insert with `insertMany()`
+
+Now, try inserting multiple documents into the `reviews` collection at once.
+
+Document 1:
+```json
+{
+  movie_id: ObjectId('67de300a9e676e70386b140b'),
+  rating: 9,
+  review: "Mind-bending masterpiece!",
+  date: new Date()
+}
+```
+Document 2:
+```json
+{
+  movie_id: ObjectId('67de300a9e676e70386b140b'),
+  rating: 8.5,
+  review: "Outstanding visuals and storytelling.",
+  date: new Date()
+}
+```
+
+<details>
+<summary>Show MQL Solution</summary>
 
 ```js
 db.reviews.insertMany([
@@ -180,7 +225,7 @@ db.reviews.insertMany([
 ])
 ```
 
-You should get a response like this:
+**Expected Output:**
 
 ```js
 {
@@ -191,10 +236,21 @@ You should get a response like this:
   }
 }
 ```
+</details>
 
-What's inside `{...}` is called a *Document* in MongoDB. The hierarchy goes like database -> collection -> document. A document is like a `dict` type in python or just JSON object.
+### Quick Recap
+
+In MongoDB:
+
+- `{ ... }` denotes a **Document**, similar to a dictionary in Python or a JSON object.
+- The hierarchy is structured as: **Database → Collection → Document**.
+- Internally, MongoDB uses **BSON** (Binary JSON) for optimized data storage and fast operations.
+
+**Tip:** Always verify the acknowledgment message (`acknowledged: true`) and ensure the correct `ObjectId` is generated after insertions.
 
 ## 2.2 Document Update
+
+Attempt updating a document without update operators:
 
 ```js
 db.movies.updateOne(
@@ -210,67 +266,82 @@ db.movies.updateOne(
 )
 ```
 
-Update without [update operators](https://www.mongodb.com/docs/manual/reference/operator/update/) leads to error:
+This update leads to an error:
 
 ```
 MongoInvalidArgumentError: Update document requires atomic operators
 ```
 
-The correct way to replace an entire document is to use `replaceOne()` instead of `updateOne()` without operators:
+The correct way to replace an entire document is using `replaceOne()`:
 
-```
-db.movies.replaceOne({
-    title: "Interstellar"
-}, {
+<details>
+<summary>Show MQL Solution</summary>
+
+```js
+db.movies.replaceOne(
+  {
+    title: "Interstellar",
+  },
+  {
     title: "New Movie Title",
     year: 2014,
     genre: ["Sci-Fi", "Adventure"],
-    reviews: []
-})
+    reviews: [],
+  }
+)
 ```
+</details>
 
-> [!Note] MongoDB does not have `replaceMany()`
-> MongoDB Server does not support a `replaceMany` operation. The replaceOne method is available to replace a single document that matches a specified filter. If you need to replace multiple documents, you would need to perform multiple replaceOne operations or use a combination of other methods to achieve your goal.
+
+### MongoDB does not have `replaceMany()`
+MongoDB Server does not support a `replaceMany` operation. The `replaceOne` method replaces a single document matching the specified filter. To replace multiple documents, perform multiple `replaceOne` operations (e.g. use [bulkWrite](https://www.mongodb.com/docs/manual/reference/method/db.collection.bulkWrite/#examples)) or combine other methods.
 
 
 ## 2.3 Set Operator
-Syntax of `updateOne/Many`:
-```
+Syntax of `updateOne` and `updateMany`:
+
+```js
 db.collection.updateOne/Many(
-    <filter>,
-    {
-        <operator1>: { <field1>: <value1>, ... },
-        <operator2>: { <field2>: <value2>, ... },
-        ...
-    },
-    {
-         upsert: <boolean>,
-         writeConcern: <document>,
-         collation: <document>,
-         arrayFilters: [ <filterdocument1>, ... ],
-         hint:  <document|string>,
-         let: <document>,
-         sort: <document>
-    }
+  <filter>,
+  {
+    <operator1>: { <field1>: <value1>, ... },
+    <operator2>: { <field2>: <value2>, ... },
+    ...
+  },
+  {
+     upsert: <boolean>,
+     writeConcern: <document>,
+     collation: <document>,
+     arrayFilters: [ <filterdocument1>, ... ],
+     hint:  <document|string>,
+     let: <document>,
+     sort: <document>
+  }
 )
 ```
 
-Update all fields in one document using `$set`:
-```
-db.movies.updateOne({
-    title: "Interstellar"
-}, {
+What would happen when we update all the fields in a document using `$set`?
+
+```js
+db.movies.updateOne(
+  {
+    title: "Interstellar",
+  },
+  {
     $set: {
-        title: "Interstellar - New Title",
-        year: 2014,
-        genre: ["Sci-Fi", "Adventure"],
-        reviews: [] // Initially empty; will store review ObjectIDs later
-    }
-})
+      title: "Interstellar - New Title",
+      year: 2014,
+      genre: ["Sci-Fi", "Adventure"],
+      reviews: [], // Initially empty; will store review ObjectIDs later
+    },
+  }
+)
 ```
 
-Response:
-```
+<details>
+<summary>Show Response</summary>
+
+```json
 {
   acknowledged: true,
   insertedId: null,
@@ -280,34 +351,61 @@ Response:
 }
 ```
 
-You can update the entire document but not `_id` field since it's immutable.
+MongoDB will update the entire document with the new fields except for the `_id` field.
+</details>
+
+### Update `_id` field
+
+What would happen if we try to update the `_id` field?
+
+```js
+db.movies.updateOne(
+  { title: "Interstellar - New Title" }, 
+  { $set: { _id: 100000000 } }
+)
+```
+
+<details>
+<summary>Show MQL Solution</summary>
 
 ```
-db.movies.updateOne({ title: "Interstellar - New Title" }, { $set: { _id: 10000 } })
-
 MongoServerError: Performing an update on the path '_id' would modify the immutable field '_id
 ```
 
-To use the MongoDB reference (aka linking) data modeling pattern, we want to update the reviews array.
+You can update the entire document but not `_id` field since it's immutable.
+</details>
 
 ## 2.4 Upsert Commands
 
-```
-db.movies.updateOne({
-    title: "Once Upon a Time... in Hollywood"
-}, {
-    $set: {
-        title: "Once Upon a Time... in Hollywood",
-        year: 2019,
-        genre: ["Comedy", "Western"],
-        reviews: []
-    }
-}, {
-    upsert: true
-})
-```
+Now, let's try to update a document that doesn't exist.
 
+<details>
+<summary>Show MQL Solution</summary>
+
+```js
+db.movies.updateOne(
+  {
+    title: "Once Upon a Time... in Hollywood",
+  },
+  {
+    $set: {
+      title: "Once Upon a Time... in Hollywood",
+      year: 2019,
+      genre: ["Comedy", "Western"],
+      reviews: [],
+    },
+  },
+  {
+    upsert: true,
+  }
+)
 ```
+</details>
+
+<details>
+<summary>Show Response</summary>
+
+```js
 {
   acknowledged: true,
   insertedId: ObjectId('67de38b13c23d2f822d5fc35'),
@@ -316,261 +414,509 @@ db.movies.updateOne({
   upsertedCount: 1
 }
 ```
+</details>
 
-`upsert: true` will create a new document if documents match the `filter` 
+
+### Notes
+`upsert: true` will configure the `updateOne`, `updateMany`, or `replaceOne` to insert a new document if no documents match the `filter` criteria. [Source](https://www.mongodb.com/docs/manual/reference/method/db.collection.update/#std-label-upsert-behavior)
 
 ## 2.5 Multi-Doc Update
 
-We'll level up. Switch to a new sample database `sample_mflix`.
+Now let's level up. Switch to the previously loaded sample database `sample_mflix`. 
 
-```
-use sample_mflix
-db.movies.updateMany({
-    genres: "Western"
-}, {
+We'll update all the movies with `genres` as "Western" with the following operations:
+1. Increment the `awards.nomination` by 1
+2. Subtract 1 from the `year` field
+3. Add `Western - A` and `Western - B` to the `genres` array field
+
+Hint: [update operators](https://www.mongodb.com/docs/manual/reference/operator/update/)
+
+<details>
+<summary>Show MQL Solution</summary>
+
+```js
+use("sample_mflix")
+db.movies.updateMany(
+  { genres: "Western" },
+  {
     $inc: {
-        "awards.nomination": 1,
-        year: -1
+      "awards.nomination": 1,
+      year: -1
     },
     $push: {
-        genres: {
-            $each: ["Western - A", "Western - B"]
-        }
+      genres: {
+        $each: ["Western - A", "Western - B"]
+      }
     }
-})
+  }
+)
 ```
 
-Note: [update operators](https://www.mongodb.com/docs/manual/reference/operator/update/)
+The `$each` operator in MongoDB is used to add multiple values to an array field. In your example, it is used with the `$push` operator to append multiple values to the genres array.
+
+</details>
+
+### Update Non-Existent Genre without `upsert`
+
+What happens if we try to update a non-existent genre using the following query?
+
+```js
+db.movies.updateMany(
+  { genres: "Some Non-Existent Genre" },
+  {
+    $inc: {
+      "awards.nomination": 1,
+      year: -1,
+    },
+    $push: {
+      genres: {
+        $each: ["Western - A", "Western - B"],
+      },
+    },
+  }
+)
+```
+
+<details>
+<summary>Show MQL Solution</summary>
+
+The update will still be acknowledged, but no changes will be made to the document.
+
+</details>
+
+### Update Non-Existent Genre with `upsert`
+
+What happens if we try to update a non-existent genre with `upsert`? Remember `upsert` will insert a new document if no documents match the `filter` criteria. The following code contains an error. Try to identify the error and fix it.
+
+```js
+db.movies.updateMany(
+  { genres: "Some Non-Existent Genre" },
+  {
+    $inc: {
+      "awards.nomination": 1,
+      year: -1,
+    },
+    $push: {
+      genres: {
+        $each: ["Western - A", "Western - B"],
+      },
+    },
+  },
+  { upsert: true }
+)
+```
+
+<details>
+<summary>Show Error</summary>
+
+When we run the above code, we got error:
+
+```
+The field 'genres' must be an array but is of type string in document {no id}
+```
+</details>
+
+<details>
+<summary>Show Fix</summary>
+
+Why is this happening? When MongoDB performs an upsert, it merges the filter and update operators to form the new document. Because your filter defines genres as a string, MongoDB tries to $push to a field that's implicitly created as a string, causing a conflict and the resulting error.
+
+To fix this, explicitly ensure the upserted document has genres as an array by using `$setOnInsert`:
+
+```js
+db.movies.updateMany(
+  { genres: "Some Non-Existent Genre" },
+  {
+    $inc: {
+      "awards.nomination": 1,
+      year: -1
+    },
+    $push: {
+      genres: {
+        $each: ["Western - A", "Western - B"]
+      }
+    },
+    $setOnInsert: {
+      genres: ["Some Non-Existent Genre"]
+    }
+  },
+  { upsert: true }
+)
+```
+**Key Takeaway:** Use `$setOnInsert` to explicitly define fields as arrays or objects on upsert operations to prevent type conflicts.
+
+</details>
+
 
 ## 2.6 FindAndModify
 
-- `findAndModify` is used to find and remove/update **a single document**. It's basically syntax sugar.
+`findAndModify` is used to find and remove/update **a single document**. It's basically syntax sugar because it guarantees atomicity without the need to use [transactions](https://www.mongodb.com/docs/manual/core/transactions/).
 
-> [!NOTE] Why not just run `updateOne()` and then `find()`?
-> You should use `findAndModify` when you need to atomically modify and return a document in a single operation. This is particularly useful in scenarios where you need to:
-> 1. **Update and Retrieve**: Update a document and immediately retrieve the updated document.
-> 2. **Atomic Operations**: Ensure that the update and retrieval are performed atomically to avoid race conditions.
-> 3. **Conditional Updates**: Perform updates based on certain conditions and sort criteria.
+### Why not just run `updateOne()` and then `find()`?
+You should use `findAndModify` when you need to atomically modify and return a document in a single operation. This is particularly useful in scenarios where you need to:
+1. **Update and Retrieve**: Update a document and immediately retrieve the updated document.
+2. **Atomic Operations**: Ensure that the update and retrieval are performed atomically to avoid race conditions.
 
-Important parameter:
+**Important parameters:**
 - `new`: Optional. When true, returns the updated document rather than the original. The default is false.
 
-```
+**Practice:** Find and update the first movie with `languages` as "English" and return the updated document.
+
+<details>
+<summary>Show MQL Solution</summary>
+
+```js
 db.movies.findAndModify({
-    query: {
-        languages: "English"
+  query: {
+    languages: "English",
+  },
+  sort: {
+    title: 1, // Ascending order
+  },
+  update: {
+    $set: {
+      languages: "English",
     },
-    sort: {
-        title: 1 // Ascending order
-    },
-    update: {
-        $set: {
-            languages: "English"
-        }
-    },
-    new: true
+  },
+  new: true,
 })
 ```
+</details>
+
 
 ## 2.7 Delete Expressions
 
-Delete one document by `_id`:
-```
+### Delete one document by `_id`
+Use `findOne()` to fetch a document and then delete it with `deleteOne()`:
+
+<details>
+<summary>Show MQL Solution</summary>
+
+```js
+db.movies.findOne()
+
+/* Reponse:
+{
+  _id: ObjectId('573a1390f29313caabcd42e8'),
+  title: 'Traffic in Souls',
+  year: 2000,
+  genres: ['Drama', 'Crime', 'Thriller'],
+  reviews: []
+}
+*/
+
 db.movies.deleteOne({
-    _id: ObjectId("573a1390f29313caabcd42e8")
+  _id: ObjectId("573a1390f29313caabcd42e8")
 })
 ```
 
 ```
 { acknowledged: true, deletedCount: 1 }
 ```
+</details>
 
-Delete multiple documents by filter condition(s):
-```
+### Delete multiple documents by filter condition(s)
+Delete all movies with `genres` as "Western - A" or "Short".
+
+<details>
+<summary>Show MQL Solution</summary>
+
+```js
 db.movies.deleteMany({
-    genres: {
-        $in: ["Western - A", "Short"]
-    }
+  genres: {
+    $in: ["Western - A", "Short"],
+  },
 })
 ```
 
 ```
 { acknowledged: true, deletedCount: 679 }
 ```
+</details>
+
 
 ## 2.8 Equality Query
-Find one document given a simple equality constraints.
+Find the movie with `title` "Traffic in Souls".
 
-```
+<details>
+<summary>Show MQL Solution</summary>
+
+```js
 db.movies.findOne({ title: "Traffic in Souls" })
 
-// Above is the short-hand to omit $eq operator
+// Above is the short-hand omitting $eq operator
 
 db.movies.findOne({ title: { $eq: "Traffic in Souls" } })
 ```
+</details>
 
 ## 2.9 Array Equality
 
-```
-db.movies.find({ languages: ["English"] }).count()
+Find the number of movies with `languages` as "English" (Exact match).
 
-db.movies.find({ languages: { $eq: ["English"] } }).count()
+Hint: To count the number of documents in a collection, use `db.collection.countDocuments()` or `db.collection.find().count()`.
+
+```js
+db.movies.countDocuments({ languages: ["English"] })
+db.movies.find({ languages: ["English"] }).count()
 ```
+
+Movies with `languages` as "English" (Exact match) will be counted.
+
+### Order of elements in the array
+
+Now find the number of movies with `languages` as "English" and "Chinese". What's the difference between the following two queries?
+
+```js
+db.movies.find({ languages: ["English", "Chinese"] }).count()
+db.movies.find({ languages: { $all: ["English", "Chinese"] } }).count()
+```
+
+<details>
+<summary>Show Answer</summary>
+
+Movies with `languages` as "English" and "Chinese" will be counted. In the first query, the exact match and order of elements in the array matter. In the second query, the order of elements in the array does not matter. The `$all` operator is used to match documents that contain all the elements in the specified array.
+
+</details>
+
+### `$in` operator for array
+
+Now find the number of movies with `languages` as "English" or "Chinese". Which of the following is the correct way to do this?
+
+```js
+db.movies.find({ languages: { $in: ["English", "Chinese"] } }).count()
+db.movies.find({ languages: ["Chinese", "English"] }).count()
+```
+
+<details>
+<summary>Show Answer</summary>
+The first query is correct. The `$in` operator is used to match documents where the value of a field equals any value in the specified array. In this case, it will find movies where the `languages` array contains either "English" OR "Chinese" (or both).
+
+The second query is looking for an exact match of the array `["Chinese", "English"]`, which means it will only find movies where the `languages` array has exactly those two languages in that specific order.
+
+Therefore, the first query is the correct way to do this.
+
+</details>
+
+
 
 ## 2.10 Relational Operators
-[Comparison Query Operators - MongoDB Manual v8.0 - MongoDB Docs](https://www.mongodb.com/docs/manual/reference/operator/query-comparison/)
+Doc: https://www.mongodb.com/docs/manual/reference/operator/query-comparison/
 
 Relational operators are used to compare numerical values, dates, and sometimes string.
 
-```
+```js
 db.movies.find({
-    "awards.wins": 0,
-    "awards.nominations": {
-        $gt: 0
-    },
-    "awards.nominations": {
-        $lte: 10
-    },
-    "rated": {
-        $in: ["TV-PG", "APPROVED"]
-    }
+  "awards.wins": 0,
+  "awards.nominations": {
+    $gt: 0,
+  },
+  "awards.nominations": {
+    $lte: 10,
+  },
+  rated: {
+    $in: ["TV-PG", "APPROVED"],
+  }
 })
 ```
 
 ## 2.11 In Operator
 `$in` operator is similar to python `in`. For example, `num in [1,2,3]` simply means `num == 1 or num == 2 or num ==3`. It's a syntax sugar. Normally it's more common to use it with string comparison though.
 
-Query all movies with countries (an array) contains at least one of the countries.
+**Practice:** Query all movies with countries (an array field) contains at least one of the countries.
 
-```
-db.movies.find({
+<details>
+<summary>Show MQL Solution</summary>
+
+```js
+db.movies.find(
+  {
     countries: {
-        $in: ["Canada", "France"]
-    }
-}, {
+      $in: ["Canada", "France"],
+    },
+  },
+  {
     title: 1,
-    countries: 1
-})
+    countries: 1,
+  }
+)
 ```
+
+Note: The second argument is the projection. It's optional.
+
+</details>
 
 ## 2.12 ElemMatch
 
 Use the `$elemMatch` operator in filter query, to find all documents that contain the specified embedded document in **an array of embedded documents**
 
-We use another database to practice this. We find all restaurants with score more than 25 and grade "A".
+We use another database to practice this. We find all restaurants with at least one grade "A" and score more than 25 in the `grades` array field.
 
-```
-use sample_restaurants
-db.restaurants.find({
+<details>
+<summary>Show MQL Solution</summary>
+
+```js
+use("sample_restaurants")
+db.restaurants.find(
+  {
     grades: {
-        $elemMatch: {
-            grade: "A",
-            score: {
-                $gte: 25
-            }
-        }
-    }
-}, {
+      $elemMatch: {
+        grade: "A",
+        score: {
+          $gte: 25
+        },
+      },
+    },
+  },
+  {
     _id: 0,
     name: 1,
     cuisine: 1,
     "grades.grade": 1,
-    "grades.score": 1
-})
+    "grades.score": 1,
+  }
+)
 ```
+
+</details>
 
 Note the above query is not equivalent to:
 
-```
-db.restaurants.find({
+```js
+db.restaurants.find(
+  {
     "grades.grade": "A",
-    "grades.score": {$gte: 25}
-}, {
+    "grades.score": { $gte: 25 },
+  },
+  {
     _id: 0,
     name: 1,
     cuisine: 1,
     "grades.grade": 1,
-    "grades.score": 1
-})
+    "grades.score": 1,
+  }
+)
 ```
 
 Dot notation matches the fields **independently**, potentially in **different embedded documents**.
 
-## 2.13 Logical Operators
-[Logical Query Operators - MongoDB Manual v8.0 - MongoDB Docs](https://www.mongodb.com/docs/manual/reference/operator/query-logical/)
-- both `$and` and `$or` takes an array as its value
-- `{ $and/or: [ { <expression1> }, { <expression2> } , ... , { <expressionN> } ] }`
+### Bonus practice: match every element in the array
 
-Query all movies released before 2000 and is in "Drama" genres. Finally return only these two fields.
+Let's say we want to find all restaurants that have every score score more than 25 in the `grades` array field. How to do this?
 
-```
-// Implicity $and
-db.movies.find({
-    released: {
-        $lt: new Date("2000-01-01")
-    },
-    genres: "Drama"
-}, {
-    released: 1,
-    genres: 1
+<details>
+<summary>Show MQL Solution</summary>
+
+MongoDB doesn't support this out of the box. But we can use `$not` and `$elemMatch` to achieve this.
+
+```js
+db.restaurants.find({
+  grades: { $not: { $elemMatch: { score: { $lte: 25 } } } },
 })
+```
+
+By using `$not`, we can exclude the documents that have at least one score less than 25. If no score is less than 25, that means every score is more than 25 for the documents.
+
+</details>
+
+## 2.13 Logical Operators
+
+[Doc: Logical Query Operators - MongoDB Manual v8.0 - MongoDB Docs](https://www.mongodb.com/docs/manual/reference/operator/query-logical/)
+
+- Both `$and` and `$or` takes an array as its value
+- Syntax: `{ $and/or: [ { <expression1> }, { <expression2> } , ... , { <expressionN> } ] }`
+
+**Practice:** Query all movies released before 2000 and/or is in "Drama" genres. Finally return only these two fields.
+
+<details>
+<summary>Show MQL Solution</summary>
+
+```js
+// Implicity $and
+db.movies.find(
+  {
+    released: {
+      $lt: new Date("2000-01-01"),
+    },
+    genres: "Drama",
+  },
+  {
+    released: 1,
+    genres: 1,
+  }
+)
 
 // $and 
-db.movies.find({
-    $and: [{
-            released: {
-                $lt: new Date("2000-01-01")
-            }
+db.movies.find(
+  {
+    $and: [
+      {
+        released: {
+          $lt: new Date("2000-01-01"),
         },
         {
-            genres: "Drama"
-        }
-    ]
-}, {
+          genres: "Drama",
+        },
+      ],
+  },
+  {
     released: 1,
-    genres: 1
-})
+    genres: 1,
+  }
+)
 
 // $or
-db.movies.find({
-    $or: [{
-            released: {
-                $lt: new Date("2000-01-01")
-            }
+db.movies.find(
+  {
+    $or: [
+      {
+        released: {
+          $lt: new Date("2000-01-01"),
         },
-        {
-            genres: "Drama"
-        }
-    ]
-}, {
+      },
+      {
+        genres: "Drama",
+      },
+    ],
+  },
+  {
     released: 1,
-    genres: 1
-})
+    genres: 1,
+  }
+)
 ```
+
+</details>
+
 
 ## 2.14 Sort Limit
 The `sort()` and `limit()` methods in MongoDB allow you to control the order and number of documents returned by a query.
 
-- `sort({field: 1})` - Sort in ascending order (1)
-- `sort({field: -1})` - Sort in descending order (-1)
-- `limit(n)` - Limit the results to n documents
+- `sort({field: 1})`: Sort in **ascending** order (1)
+- `sort({field: -1})`: Sort in **descending** order (-1)
+- `limit(n)`: Limit the results to n documents
 
 When using both methods together, MongoDB applies the sort first, then limits the results. This is important for performance, especially with large collections.
 
-Example: Find the 3 highest-rated movies, if rating is the same then sort on votes in descending order.
+**Practice:** Find the 3 highest-rated movies, if rating is the same then sort on votes in descending order.
 
-```
+```js
 db.movies.find().sort({
-    "imdb.rating": -1,
-    "imdb.votes": -1
+  "imdb.rating": -1,
+  "imdb.votes": -1,
 }).limit(3)
 ```
 
-The result returns three movies with no rating and votes! Upon close examination, we realized that the fields are string type.
+How is the above query wrong?
+
+<details>
+<summary>Show Answer</summary>
+
+The result returns three movies with no rating and votes! Upon close examination, we realized that the fields are string data type. By default, MongoDB will sort string Lexicographically in ascending order, which means empty string is the smallest.
 
 To fix this issue, we need to convert the string fields to numeric types using MongoDB's aggregation operators. Here's how to properly query and sort by numeric fields:
 
-```
+```js
 db.movies.aggregate([
   // Stage 1: Convert strings to numeric, handle empty strings and errors
   {
@@ -620,6 +966,8 @@ db.movies.aggregate([
   }
 ]);
 ```
+</details>
+
 
 ## 2.15 Projections
 
@@ -630,33 +978,33 @@ Projections in MongoDB allow you to selectively return fields from query results
 - The `_id` field is included by default unless explicitly excluded
 - You **cannot** mix inclusion and exclusion in the same projection, except for the `_id` field
 
-```
+```js
 { name: 1, age: 1, _id: 0 } // correct
 { _id: 0, age: 0, city: 0 } // correct
-{ name: 1, city: 0 } //incorrect: You can't mix inclusion (1) and exclusion (0) projections (except for _id).
+{ name: 1, city: 0 } //incorrect: You can't mix inclusion (1) and exclusion (0) projections for normal fields (except for _id).
 ```
 
 ## 2.16 Cursor Results
 - MongoSh or JS
-    - `cursor.toArray()` retrieves all results at once from a cursor.
+    - `cursor.toArray()`: retrieves all results at once from a cursor.
 - Python
     - `list(cursor)`: simple but memory-heavy for large data
-    - `for doc in cursor`: ideal for large collection and memory-efficient
+    - `for doc in cursor`: ideal for large collection and memory-efficient as you iterate over the cursor instead of loading all data into memory at once.
     - `cursor.to_list(length=None)`: async retrieval
 
 See [Python demo using PyMongo](./scripts/2_16_cursor_results.py).
 
 ## 2.17 Count Documents
 - In mongosh, use `.countDocuments(<query>)` (recommended)
-    - `db.collection.countDocuments({ age: { $gte: 18 } });`
-    - `db.collection.find({ age: { $gte: 18 } }).count();  // DEPRECATED`
+    - `db.collection.countDocuments({ age: { $gte: 18 } })`
+    - `db.collection.find({ age: { $gte: 18 } }).count()`
 - In JavaScript, use `.countDocuments(<query>)`
-- In Python `PyMongo`, use `count_documents()`
+- In Python `PyMongo` driver, use `count_documents()`
     - Try not to use `len(list(cursor))`, memory heavy.
 
 ## 2.18 Search Index
 
-Atlas Search is a relevance-based search not a database search. MongoDB built search solution on top of [Apache Lucene](https://lucene.apache.org/). Search starts with search indexes, which are not same as database indexes.
+Atlas Search is a relevance-based search not a database search. MongoDB built search solution on top of [Apache Lucene](https://lucene.apache.org/). Search starts with search indexes, which are not same as database indexes. Here's a good read about inverted search index: https://www.cockroachlabs.com/blog/inverted-indexes/ which gives you a good intuition about how search works.
 
 Components of Atlas Search Index:
 1. **Analyzer**: Determines how text is processed during indexing and searching
@@ -677,75 +1025,88 @@ Components of Atlas Search Index:
    - Case sensitivity settings
    - Normalization options for text processing
 
-Ideally it's good to know how to create a search index [on MongoDB Atlas UI](https://www.mongodb.com/docs/atlas/atlas-search/tutorial/create-index/) or [using mongosh command line](https://www.mongodb.com/docs/atlas/atlas-search/create-index/):
+Ideally it's good to know how to create a search index on both [MongoDB Atlas UI](https://www.mongodb.com/docs/atlas/atlas-search/tutorial/create-index/) and [mongosh](https://www.mongodb.com/docs/atlas/atlas-search/create-index/):
 
 Follow the first tutorial to create an index for `movies` collection using dynamic mapping.
 
 First let's check if there's a new search index created for `movies` collection.
 
-```
+```js
 db.movies.getSearchIndexes()
 ```
 
-Let's drop it and create another one using command line.
+Let's drop the default index and create another one using command line.
 
-```
+```js
 db.movies.dropSearchIndex("default")
 ```
 
-```
+**Practice:** Create a search index called `movieTitleIdx` for `movies` collection with the following static mapping: `title` and `plot` are string fields.
+
+<details>
+<summary>Show MQL Solution</summary>
+
+```js
 db.movies.createSearchIndex(
-    "movieTitleIdx",
-    "search",
-    {
-        "mappings": {
-            "dynamic": false,
-            "fields": {
-                "title": {
-                    "type": "string"
-                },
-                "plot": {
-                    "type": "string"
-                }
-            }
-        }
-    }
+  "movieTitleIdx",
+  "search",
+  {
+    mappings: {
+      dynamic: false,
+      fields: {
+        title: {
+          type: "string",
+        },
+        plot: {
+          type: "string",
+        },
+      },
+    },
+  }
 )
 ```
+</details>
+
 
 ## 2.19 Search Query
 MongoDB Atlas Search provides powerful full-text search capabilities that extend beyond basic queries. After creating a search index, you can perform sophisticated search operations using the `$search` operator within an aggregation pipeline.
 
 The simplest form of a search query uses the `$search` operator with the `text` operator:
 
-```
-db.movies.aggregate([{
+```js
+db.movies.aggregate([
+  {
     $search: {
-        index: "movieTitleIdx", // Replace with your search index name
-        text: {
-            query: "adventure",
-            path: "title" // The field to search in
-        }
-    }
-}, {
+      index: "movieTitleIdx", // Replace with your search index name
+      text: {
+        query: "adventure",
+        path: "title", // The field to search in
+      },
+    },
+  },
+  {
     $project: {
-        title: 1,
-        score: {
-            $meta: "searchScore"
-        }
-    }
-}]);
+      title: 1,
+      score: {
+        $meta: "searchScore",
+      }, // We can use $meta to get the relevance search score for each document.
+    },
+  },
+])
 ```
 
 ### Using `$search` and `compound` Operators
 The compound operator allows you to:
 - Combine multiple conditions (`must`, `should`, `mustNot`).
 - Filter by numeric values (`range`).
-- Boost specific results (`score`)
+- Boost specific results relevance (`score`)
 
-Example: Search for "adventure" in multiple fields, filter by IMDb rating & boost recent movies
+**Practice:** Create a search aggregation pipeline that searches for "adventure" in multiple fields, filter by IMDb rating & boost recent movies after 2015, and limit the results to 5.
 
-```
+<details>
+<summary>Show MQL Solution</summary>
+
+```js
 db.movies.aggregate([
   {
     $search: {
@@ -778,19 +1139,22 @@ db.movies.aggregate([
   { $limit: 5 },
 ])
 ```
+</details>
 
 ## 2.20 Match + Group
 
-Write an aggregation pipeline that does the following:
+**Practice:** Write an aggregation pipeline that does the following:
 1. Matches movies that are either Adventure OR Comedy AND have an IMDB rating >= 8
 2. Groups the results by directors
-3. Calculates average IMDB rating and total award wins for each director
+3. Calculates average IMDB rating (`imdb.rating`) and total award wins (`awards.wins`) for each director
 4. Sorts by award count in descending order
 5. Renames _id field to director
 6. Returns top 10 results
 
+<details>
+<summary>Show MQL Solution</summary>
 
-```
+```js
 use("sample_mflix");
 
 db.movies.aggregate([
@@ -802,7 +1166,7 @@ db.movies.aggregate([
   },
   {
     $group: {
-      _id: "$directors",
+      _id: "$directors", // Use $ sign to refer to the field in the documents.
       avgRating: { $avg: "$imdb.rating" },
       awardCount: { $sum: "$awards.wins" },
     },
@@ -825,7 +1189,7 @@ db.movies.aggregate([
   },
 ]);
 ```
-
+</details>
 The output will be an array of documents where each document contains:
 - `director`: Array of director names for the group
 - `avgRating`: Average IMDB rating of all matched movies by these directors
@@ -833,7 +1197,12 @@ The output will be an array of documents where each document contains:
 
 ## 2.21 Lookup
 
-```
+**Practice:** Write an aggregation pipeline that performs a left outer join with the `comments` collection on the `_id` field, and adds a `comment_count` field to the results that contains the size of the `comments` array.
+
+<details>
+<summary>Show MQL Solution</summary>
+
+```js
 use("sample_mflix");
 
 db.movies.aggregate([
@@ -852,27 +1221,29 @@ db.movies.aggregate([
   },
 ]);
 ```
+</details>
+
 
 ## 2.22 Out Operator
 
-https://www.mongodb.com/docs/manual/reference/operator/aggregation/out/
+Doc: https://www.mongodb.com/docs/manual/reference/operator/aggregation/out/
 
-`$out` should **always** be the last aggregation stage in a pipeline. It takes the output of the pipeline and writes them to a specified collection. You have the freedom to specify the output database.
+`$out` should **always be the last stage** in an aggregation pipeline. It takes the output of the pipeline and writes them to a specified collection or a different database if specified.
 
 Syntax:
-```
+```js
 { $out: "<output-collection>" } // Output collection is in the same database
 
-{ $out: { db: "<output-db>", coll: "<output-collection>" } }
+{ $out: { db: "<output-db>", coll: "<output-collection>" } } // Output collection is in a different database
 ```
 
 # SECTION 3: INDEXES
 ## 3.1 Collection Scan
-Index(es) speed up read while slow down write. Under the hood, index is implemented using a tree-based data structure with time complexity of O(logN).
+Index(es) speed up reads while slowing down writes. Under the hood, an index is implemented using a tree-based data structure with time complexity of O(logN).
 
 Creating new indexes in MongoDB can impact write performance because each write operation (insert, update, delete) must also update the indexes. The exact impact on write speed depends on several factors, including the number of indexes, the complexity of the indexes, and the write-to-read ratio of your application.
 
-Here are some representive index types:
+Here are some representive index types might appear in the exam:
 1. Single field index
 2. Compound index
     1. When designing the order of fields in a compound index in MongoDB, you should follow the **ESR (Equality, Sort, Range) rule**.
@@ -888,10 +1259,9 @@ Here are some representive index types:
 6. Geospatial index
 
 
-
 ## 3.2 Array Index
 
-```
+```js
 use("sample_mflix");
 
 db.movies.find({
@@ -901,7 +1271,7 @@ db.movies.find({
 
 Response: 
 
-```
+```js
 {
   "explainVersion": "1",
   "queryPlanner": {
@@ -925,7 +1295,7 @@ Response:
     "prunedSimilarIndexes": false,
     "winningPlan": {
       "isCached": false,
-      "stage": "COLLSCAN",
+      "stage": "COLLSCAN", // Collscan means it's not optimized by an index.
       "filter": {
         "cast": {
           "$in": [
@@ -960,21 +1330,21 @@ Response:
 }
 ```
 
-We `COLLSCAN`, meaning not optimized by index. Let's create an index to speed this up.
+We see `COLLSCAN`, meaning it's not optimized by an index. Let's create an index to speed this up.
 
-```
+```js
 db.movies.createIndex({ cast: 1 });  // multi-key index since cast is array type
 ```
 
 Now run the `.explain()` method again we get:
 
-```
+```js
 ...
 "winningPlan": {
       "isCached": false,
       "stage": "FETCH",
       "inputStage": {
-        "stage": "IXSCAN",
+        "stage": "IXSCAN", // IXSCAN means it's optimized by an index.
         "keyPattern": {
           "cast": 1
         },
@@ -1001,12 +1371,13 @@ Now run the `.explain()` method again we get:
 ...
 ```
 
+We see `IXSCAN`, meaning it's optimized by an index.
 
 ## 3.3 Sort Index
 
-Compound indexes cannot support queries where the sort order does not match the index or the reverse of the index.
+Compound indexes do not support queries where the sort order does not match the index direction or the reverse of the index direction.
 
-```
+```js
 use("sample_mflix");
 
 // Option A:
@@ -1028,7 +1399,7 @@ db.movies
   .explain();
 ```
 
-```
+```js
 // Works for Option A with winningPlan.inputStage.inputStage.direction = "forward"
 db.movies.createIndex({
   year: 1,
@@ -1060,16 +1431,16 @@ db.movies.createIndex({
 });
 ```
 
-Level up to three sort keys:
+Let's level up to three sort keys:
 
-```
-// Does not work
+```js
+// Does not work for the below query
 db.movies.createIndex({
   year: 1,
   directors: 1,
 });
 
-// Works
+// Works for the below query
 db.movies.createIndex({
   year: 1,
   directors: 1,
@@ -1086,9 +1457,9 @@ db.movies
   .explain();
 ```
 
-What if we have a longer compound index?
+What if our sort keys are a subset of the compound index?
 
-```
+```js
 // Works (forward)
 db.movies.createIndex({
   year: 1,
@@ -1096,7 +1467,7 @@ db.movies.createIndex({
   "imdb.votes": 1,
 });
 
-// Works (forward). The last field is not sorted therefore can be any direction.
+// Works (forward). `imdb.votes` is not sorted therefore can be any direction.
 db.movies.createIndex({
   year: 1,
   directors: 1,
@@ -1107,7 +1478,7 @@ db.movies.createIndex({
 db.movies.createIndex({
   year: -1,
   directors: -1,
-  "imdb.votes": -1,
+  "imdb.votes": 1,
 });
 
 db.movies
@@ -1119,6 +1490,20 @@ db.movies
   .explain();
 ```
 
+You cannot use a compound index for the below query.
+
+```js
+db.movies
+  .find({}, { _id: 0, title: 1, year: 1, "imdb.votes": 1 })
+  .sort({
+    year: 1,
+    "imdb.votes": 1,
+  })
+  .explain();
+```
+
+Hence, it's better to create compound index since it's more flexible. All subset of the compound index starting with the first field and without gaps will work.
+
 ## 3.4 Index Count
 
 `db.movies.getIndexes().length`
@@ -1127,18 +1512,18 @@ db.movies
 
 MongoDB indexes improve query performance but come with trade-offs, such as increased storage usage and write operation overhead. Deleting an index can free up storage but may negatively impact query performance.
 
-Good practice:
-1. Use compound indexes for multi-field queries instead of multiple single-field indexes. As seen in [3.3](#33-sort-index), compound indexes increase the likelihood of covered queries, where the query can be satisfied entirely using the index without needing to examine the actual documents. Say if you create a compound index {A: 1, B: 1, C: 2}, queries involve A, or [A, B], or [A, B, C] can all use the compound index.
+Good practices:
+1. Use compound indexes for multi-field queries instead of multiple single-field indexes. As seen in [3.3](#33-sort-index), compound indexes increase the likelihood of covered queries, where the query can be satisfied entirely using the index without needing to examine the actual documents. Say if you create a compound index {A: 1, B: 1, C: 2}, queries involving A, or [A, B], or [A, B, C] can all use the compound index.
 2. Only index fields that are frequently used in queries using the ESR order.
 3. Analyze index usage with `db.collection.getIndexes()` and query execution plans `.explain()`.
 
 ## 3.6 Explain Plan
 
-`db.collection.find(<query>).explain()`
+`db.collection.find(<query>).explain()` or `db.collection.explain().find(<query>)`.
 
 Explain response:
 
-```
+```js
 {
   "explainVersion": "1",
   "queryPlanner": {
@@ -1260,27 +1645,31 @@ Explain response:
 }
 ```
 
-`winningPlan` and `command` are two key field to pay attention.
+`winningPlan` and `command` are the two key fields to pay attention.
 
 # SECTION 4: DATA MODELING
 ## 4.1 Relationships
-1. One-to-one
-2. One-to-many
-3. Many-to-many
+1. One-to-one: A user has one user profile.
+2. One-to-many: A user has many posts.
+3. Many-to-many: A user has many followers and a user follows many other users.
 
 ## 4.2 Antipatterns
-1. Massive array (an unbounded array)
-    1. Cannot exceed 16MB per document
-2. Massive number of collections
+1. Massive arrays (unbounded arrays)
+   1. Cannot exceed 16MB per document
+2. Excessive number of collections
 3. Unnecessary indexes
 4. Bloated documents
-    1. Storing large amounts of data together in a document when that data is not frequently accessed together.
-5. Separating Data That Is Accessed Together
+   1. Storing large amounts of data together in a document when that data is not frequently accessed together
+5. Separating data that is accessed together
 
 # SECTION 5: TOOLS AND TOOLING
 ## 5.1 Atlas Explorer
+Load sample data -> Browse collection -> find a document in any collection.
 
-Browse collection -> find a document in any collection.
+![image](./assets/image.png)
+
+![image](./assets/image-2.png)
+
 
 # SECTION 6: DRIVERS
 ## 6.1 Driver Definition
@@ -1293,6 +1682,7 @@ A MongoDB driver is a library that allows your application to connect to and int
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
+# Obtain your connection string from Atlas UI -> Connect -> Drivers
 connection_string_uri = "mongodb+srv://<username>:<db_password>@dev-cert-exam-prep.5rcr9.mongodb.net/?appName=dev-cert-exam-prep"
 
 # Create a new client and connect to the server
@@ -1302,8 +1692,9 @@ client = MongoClient(connection_string_uri, server_api=ServerApi('1'))
 ## 6.3 URI Components
 - [Connection Strings - MongoDB Manual v8.0 - MongoDB Docs](https://www.mongodb.com/docs/manual/reference/connection-string/#connection-string-formats)
     - [Connection Strings Components](https://www.mongodb.com/docs/manual/reference/connection-string/#connection-string-components-1)
+- Two Formats:
     - SRV connection format (new): A connection string with a hostname that corresponds to a DNS SRV record. Your driver or [mongosh](https://www.mongodb.com/docs/mongodb-shell/#mongodb-binary-bin.mongosh) queries the record to determine which hosts are running the [mongod](https://www.mongodb.com/docs/manual/reference/program/mongod/#mongodb-binary-bin.mongod) or [mongos](https://www.mongodb.com/docs/manual/reference/program/mongos/#mongodb-binary-bin.mongos) instances.
-        - `mongodb+srv://[username:password@]host[/[defaultauthdb][?options]]
+        - `mongodb+srv://[username:password@]host[/[defaultauthdb][?options]]`
     - Standard connection string format (old): A connection string that specifies all hosts that are running the [mongod](https://www.mongodb.com/docs/manual/reference/program/mongod/#mongodb-binary-bin.mongod) or [mongos](https://www.mongodb.com/docs/manual/reference/program/mongos/#mongodb-binary-bin.mongos) instances.
         - `mongodb://[username:password@]host1[:port1][,...hostN[:portN]][/[defaultauthdb][?options]]`
 
@@ -1321,17 +1712,19 @@ Advantages of Connection Pooling:
 
 Each driver may have specific settings and defaults for managing connection pools, such as maxPoolSize, minPoolSize, maxConnecting, and maxIdleTimeMS, which can be configured to optimize performance based on the application's needs.
 
+*(Generated by ChatGPT. Please verify the accuracy.)*
+
 ## 6.5 Insert Syntax
 
 ```py
 # Insert one document
-result = collection.insert_one({"name": "Mongo's Burgers"})
+result = collection.insert_one({"title": "The Matrix", "year": 1999})
 print(result.acknowledged)
 
 # Insert multiple documents
 document_list = [
-    {"name": "Mongo's Burgers"},
-    {"name": "Mongo's Pizza"}
+    {"title": "Inception", "year": 2010},
+    {"title": "Interstellar", "year": 2014}
 ]
 result = collection.insert_many(document_list)
 print(result.acknowledged)
@@ -1361,10 +1754,30 @@ result = collection.find_one(query, projection)
 result = collection.find(query, projection)
 ```
 
+Can use `limit`, `sort`, `skip` to modify the result.
+
+Doc: https://www.mongodb.com/docs/languages/python/pymongo-driver/current/crud/query/specify-documents-to-return/#overview
+
+```py
+result = collection.find(query, projection).limit(10).sort("year", pymongo.ASCENDING).skip(5)
+```
+
+### Important: PyMongo Sort
+Documentation: https://pymongo.readthedocs.io/en/stable/api/pymongo/cursor.html#pymongo.cursor.Cursor.sort
+
+In PyMongo, we can use `pymongo.ASCENDING` or `pymongo.DESCENDING` to indicate the sort direction instead of `1` or `-1`.
+
+**Note that you DO NOT pass dictionary to `sort()` method in PyMongo.**
+- For single field, you can pass `sort(<field>, pymongo.ASCENDING)` or `sort(<field>, pymongo.DESCENDING)`.
+- For multiple fields, you can pass a list of tuples: `sort([("field1", pymongo.ASCENDING), ("field2", pymongo.DESCENDING)])`.
+
+For reason please refer to romulomadu's answer on StackOverflow: https://stackoverflow.com/questions/8109122/how-to-sort-mongodb-with-pymongo
+
 ## 6.9 Aggregation Syntax
 
 ```py
-# Source: https://www.mongodb.com/developer/languages/python/python-quickstart-aggregation/
+# Source: https://www.mongodb.com/developer/languages/python/python-quickstart-aggregation/ (CC BY-NC-SA 3.0 US)
+
 pipeline = [
    {
       "$match": {
@@ -1388,7 +1801,7 @@ for movie in results:
 
 ## 6.10 MQL vs. Aggregation
 
-```
+```py
 # MQL
 orders = db.orders.find({ "customer": "Alice" })
 
