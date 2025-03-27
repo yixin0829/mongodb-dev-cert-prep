@@ -66,6 +66,7 @@ Note: we use volume to persist MongoDB data between container restarts.
 
 ## Exam Objectives
 
+Source: [Exam study guide with exam objectives](https://learn.mongodb.com/learn/course/mongodb-associate-developer-exam-study-guide/main/associate-dba-exam-study-guide?client=customer)
 
 | Section | Exam Objective (Topics) | Weighting |
 |---------|-------------------------|-----------|
