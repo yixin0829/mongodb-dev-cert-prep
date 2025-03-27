@@ -187,7 +187,7 @@ db.movies.insertOne({
 Now, try inserting multiple documents into the `reviews` collection at once.
 
 Document 1:
-```json
+```js
 {
   movie_id: ObjectId('67de300a9e676e70386b140b'),
   rating: 9,
@@ -196,7 +196,7 @@ Document 1:
 }
 ```
 Document 2:
-```json
+```js
 {
   movie_id: ObjectId('67de300a9e676e70386b140b'),
   rating: 8.5,
