@@ -1,6 +1,13 @@
-# Mongodb Associate Developer Certification Exam Prep
+# 🚀 MongoDB Associate Developer Certification Exam Prep
 
-An end-to-end project for preparing [MongoDB Associate Developer Certification Exam](https://learn.mongodb.com/pages/mongodb-associate-developer-exam).
+Study guide + practice questions for preparing [MongoDB Associate Developer Certification Exam](https://learn.mongodb.com/pages/mongodb-associate-developer-exam).
+
+This repo is a by-product of my preparation for the exam. I'm sharing it in the hope that it can be useful for others. In this repo, you will find:
+- ✅ Hands-on practice with MongoDB Query Language (MQL)
+- 🐍 Python examples using the PyMongo driver
+- 🧠 Curated questions complete with detailed solutions and explanations
+
+The sections are organized based on the [official exam objectives](https://learn.mongodb.com/learn/course/mongodb-associate-developer-exam-study-guide/main/associate-dba-exam-study-guide?client=customer).
 
 
 ## Resources
