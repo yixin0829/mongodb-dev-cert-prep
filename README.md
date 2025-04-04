@@ -126,6 +126,10 @@ Source: [Exam study guide with exam objectives](https://learn.mongodb.com/learn/
 | 6.8     | Identify the correct syntax for the Python driver (PyMongo) to find many documents and to find one document.                | [link](#68-find-syntax) |
 | 6.9     | Identify the correct syntax for the Python driver (PyMongo) to create an aggregation pipeline.                              | [link](#69-aggregation-syntax) |
 | 6.10    | Identify the diﬀerent syntax for the Python driver (PyMongo) when using the MongoDB Query Language (MQL) and when using the Aggregation Framework. | [link](#610-mql-vs-aggregation) |
+| 7       | **Bonus Topic: Advanced Operators in Aggregation Pipeline**                                                           | **N/A**   |
+| 7.1     | `$switch` operator                                                                                                  | [link](#71-switch-operator) |
+| 7.2     | `$unwind` operator                                                                                                  | [link](#72-unwind-operator) |
+| 7.3     | `$addFields` operator                                                                                               | [link](#73-addfields-operator) |
 
 
 # SECTION 1: MONGODB OVERVIEW AND THE DOCUMENT MODEL
@@ -1878,4 +1882,95 @@ orders = db.orders.find("customer": "Alice")
 ```
 
 
+# SECTION 7: ADVANCED OPERATORS IN AGGREGATION PIPELINE
+## 7.1 `$switch` Operator
+`$switch` is like CASE statement in SQL or switch statement in Python. A common pattern is to use it with `$addFields` to create "categorical buckets" for our data followed by `$group`.
 
+Syntax:
+```js
+$switch: {
+   branches: [
+      { case: <expression>, then: <expression> },
+      { case: <expression>, then: <expression> },
+      ...
+   ],
+   default: <expression>
+}
+```
+
+Practice: Use `sample_mflix.movies` collection. Create a new field `releaseBucket` based on the `released` field. Bucket the movies into 3 categories: "New" (2010-2015), "Old" (2000-2009), "Very Old" (<2000).
+
+<details>
+<summary>✨ Show Answer ✨</summary>
+
+```js
+db.movies.aggregate([
+  {
+    $addFields: {
+      releaseBucket: {
+        $switch: {
+          branches: [
+            {
+              case: { $gte: ["$released", new Date("2010-01-01")] },
+              then: "New",
+            },
+            {
+              case: { $gte: ["$released", new Date("2000-01-01")] },
+              then: "Old",
+            },
+          ],
+          default: "Very Old",
+        },
+      },
+    },
+  }
+])
+```
+
+Note here we don't need to specify the upper bound for "Old" because the previous case will already be matched.
+</details>
+
+
+## 7.2 `$unwind` Operator
+Use `$unwind` to deconstruct an array field from the input documents to output a document for each element. The rest of the document is the same except the array field is replaced by the element.
+
+Example on MongoDB Doc: https://www.mongodb.com/docs/manual/reference/operator/aggregation/unwind/#examples
+
+```js
+db.inventory.insertOne({ "_id" : 1, "item" : "ABC1", sizes: [ "S", "M", "L"] })
+db.inventory.aggregate( [ { $unwind : "$sizes" } ] )
+
+// Result:
+{ "_id" : 1, "item" : "ABC1", "sizes" : "S" }
+{ "_id" : 1, "item" : "ABC1", "sizes" : "M" }
+{ "_id" : 1, "item" : "ABC1", "sizes" : "L" }
+```
+
+Note: Missing, empty array, or null values are not included in the output.
+
+Practice: Top Rated Genres: Determine the five genres with the highest average IMDb ratings.
+
+<details>
+<summary>✨ Show Answer ✨</summary>
+
+```js
+db.movies.aggregate([
+  { $unwind: "$genres" },
+  { $group: { _id: "$genres", avgRating: { $avg: "$imdb.rating" } } },
+  { $sort: { avgRating: -1 } },
+  { $limit: 5 },
+])
+```
+</details>
+
+## 7.3 `$addFields` Operator
+> Important: If the name of the new field is the same as an existing field name (including _id), $addFields overwrites the existing value of that field with the value of the specified expression.
+>
+> source: https://www.mongodb.com/docs/manual/reference/operator/aggregation/addFields/
+
+
+```js
+{ $addFields: { <newField>: <expression>, ... } }
+```
+
+Common use case: use it to add intermediate fields to facilitate aggregation.
