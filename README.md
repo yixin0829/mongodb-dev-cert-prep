@@ -2,12 +2,17 @@
 
 Study guide + practice questions for preparing [MongoDB Associate Developer Certification Exam](https://learn.mongodb.com/pages/mongodb-associate-developer-exam).
 
-This repo is a by-product of my own preparation for the exam. I'm sharing it in the hope that it can be useful for others. In this repo, you will find:
+This repo is a by-product of my own preparation for the exam. I'm sharing it in the hope that it can be useful for others. **In this repo, you will find:**
 - ✅ Hands-on practice with MongoDB Query Language (MQL)
 - 🐍 Python examples using the PyMongo driver
 - 🧠 Curated questions complete with detailed solutions and explanations
 
 The sections are organized based on the [official exam objectives](https://learn.mongodb.com/learn/course/mongodb-associate-developer-exam-study-guide/main/associate-dba-exam-study-guide?client=customer).
+
+**Changelog:**
+- [2025-04-04] Added bonus section on advanced operators in aggregation pipeline
+- [2025-04-05] I've successfully passed the exam! 🎉 Here's the url: https://www.credly.com/badges/2fe21593-91c5-47fd-ba85-15ff836615b9/public_url
+- [2025-04-05] Added some final touches to the repo based on my exam experience
 
 
 ## Resources
@@ -143,6 +148,7 @@ Source: [Exam study guide with exam objectives](https://learn.mongodb.com/learn/
 
 ## 1.2 Co-Existing Docs
 - `_id` field should be unique in the same collection
+- If there is unique indexes created on other fields, the document with the same value for those fields will not be allowed.
 
 # SECTION 2: CRUD
 ## 2.1 Insert Commands
@@ -353,7 +359,7 @@ db.movies.updateOne(
 <details>
 <summary>✨ Show Response ✨</summary>
 
-```json
+```js
 {
   acknowledged: true,
   insertedId: null,
@@ -863,10 +869,11 @@ db.movies.find(
         released: {
           $lt: new Date("2000-01-01"),
         },
-        {
-          genres: "Drama",
-        },
-      ],
+      },
+      {
+        genres: "Drama",
+      },
+    ],
   },
   {
     released: 1,
@@ -1092,6 +1099,9 @@ db.movies.aggregate([
       text: {
         query: "adventure",
         path: "title", // The field to search in
+        fuzzy: {
+          maxEdits: 2, // When you want to search for a word that is similar to the query word (e.g. account for spelling mistakes)
+        },
       },
     },
   },
@@ -1713,6 +1723,8 @@ Explain response:
 1. One-to-one: A user can only have one user profile.
 2. One-to-many: A user can have many posts.
 3. Many-to-many: A user can follow many other users and a user can be followed by many other users.
+
+Note: I recall the actual exam question is very involved. If needed, I'd suggest come up with different examples and practice them.
 
 ## 4.2 Antipatterns
 1. Massive arrays (unbounded arrays)
